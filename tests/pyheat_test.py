@@ -14,7 +14,6 @@ import unittest
 
 from pyheat import PyHeat
 
-
 class PyHeatTest(unittest.TestCase):
     def setUp(self):
         data_path = os.path.dirname(os.path.realpath(__file__))
