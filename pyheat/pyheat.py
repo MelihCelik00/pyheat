@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pprofile
 from matplotlib.widgets import Slider
+from flask import Flask, render_template_string
 
 
 class PyHeat(object):
@@ -51,28 +52,16 @@ class PyHeat(object):
         self.__create_heatmap_plot()
 
     def show_heatmap(self, blocking=True, output_file=None, enable_scroll=False):
-        """Method to actually display the heatmap created.
-
-        @param blocking: When set to False makes an unblocking plot show.
-        @param output_file: If not None the heatmap image is output to this
-        file. Supported formats: (eps, pdf, pgf, png, ps, raw, rgba, svg,
-        svgz)
-        @param enable_scroll: Flag used add a scroll bar to scroll long files.
-        """
         if output_file is None:
-            if enable_scroll:
-                # Add a new axes which will be used as scroll bar.
-                axpos = plt.axes([0.12, 0.1, 0.625, 0.03])
-                spos = Slider(axpos, 'Scroll', 10, len(self.pyfile.lines))
+            app = Flask(__name__)
 
-                def update(val):
-                    """Method to update position when slider is moved."""
-                    pos = spos.val
-                    self.ax.axis([0, 1, pos, pos - 10])
-                    self.fig.canvas.draw_idle()
+            @app.route('/')
+            def display_heatmap():
+                # Generate heatmap plot
+                heatmap = self.__create_heatmap_plot()
+                return render_template_string('<html><body>{{ heatmap }}</body></html>', heatmap=heatmap)
 
-                spos.on_changed(update)
-            plt.show(block=blocking)
+            app.run()
         else:
             plt.savefig(output_file)
 
