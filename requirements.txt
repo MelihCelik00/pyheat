@@ -2,3 +2,4 @@
 pprofile
 # Requirement for heatmap.
 matplotlib
+flask
